@@ -1,8 +1,12 @@
 const requestHttp = require('request');
 
-module.exports = (function quoteSvc() {
-    return {
-        getSymbolInformation: (stockSymbol, callback) => {
+module.exports = (function () {
+
+    function QuoteSvc() {
+    }
+
+    QuoteSvc.prototype = {
+        getSymbolInformation: function (stockSymbol, callback) {
             requestHttp(`https://api.iextrading.com/1.0/stock/${stockSymbol}/quote`, { json: true }, (err, res, body) => {
                 if (err) {
                     return 'Some Technical Error occurred! Apologies.';
@@ -15,4 +19,6 @@ module.exports = (function quoteSvc() {
             });
         }
     }
+
+    return QuoteSvc;
 }());

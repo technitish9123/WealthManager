@@ -1,7 +1,9 @@
 const requestHttp = require('request');
 const moment = require('moment');
 const _ = require('underscore');
-const quoteSvc = require('./services/quoteService');
+const QuoteSvc = require('./services/quoteService');
+
+let quoteSvc = new QuoteSvc();
 
 exports.WealthManager = function WealthManager(request, response) {
   let action = request.body.result.action; // https://dialogflow.com/docs/actions-and-parameters
