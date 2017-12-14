@@ -1,8 +1,7 @@
 const requestHttp = require('request');
 const moment = require('moment');
 const _ = require('underscore');
-
-const alphaVantageApiKey = '82N1GMV9Z2K0OVZL';
+const quoteSvc = require('./services/quoteService');
 
 exports.WealthManager = function WealthManager(request, response) {
   let action = request.body.result.action; // https://dialogflow.com/docs/actions-and-parameters
@@ -20,30 +19,12 @@ exports.WealthManager = function WealthManager(request, response) {
   const actionHandlers = {
     'GetStockDetail': () => {
       const stockSymbol = parameters.StockName;
-
-      requestHttp(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stockSymbol}&apikey=${alphaVantageApiKey}`, { json: true }, (err, res, body) => {
-        if (err) { return console.log(err); }
-        let stockDetails = '';
-       
-        let $today = new Date();
-        let $yesterday = new Date($today);
-        $yesterday.setDate($today.getDate() - 1); 
-
-        let dayString = moment($today).format('YYYY-MM-DD');
-        let details = body["Time Series (Daily)"][dayString];
-
-        if (!details) {
-          // timezone issue
-          dayString = moment($yesterday).format('YYYY-MM-DD');
-          details = body["Time Series (Daily)"][dayString];
-        }
-        _.each(details, (value, key) => {
-          key = key.replace(/\d+\./, '');
-          stockDetails += `${key} is ${value} `;
-        })
-        responseToUser = `Stock details for ${stockSymbol} on ${dayString} are as follows: ${stockDetails}`;
+      if (!stockSymbol) {
+        responseToUser = `I am not sure about this symbol. Can you try another?`; // Send simple response to user
         sendResponse(responseToUser);
-      });
+      } else {
+        quoteSvc.getSymbolInformation(stockSymbol, sendResponse);
+      }
 
     },
     // The default welcome intent has been matched, welcome the user (https://dialogflow.com/docs/events#default_welcome_intent)
@@ -60,7 +41,7 @@ exports.WealthManager = function WealthManager(request, response) {
     // Default handler for unknown or undefined actions
     'default': () => {
       // Use the Actions on Google lib to respond to Google requests; for other requests use JSON
-      responseToUser = 'This message is from Weather Manager! ';
+      responseToUser = 'This message is from Wealth Manager! ';
       sendResponse(responseToUser);
     }
   };

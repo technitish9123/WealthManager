@@ -1,0 +1,1 @@
+gcloud beta functions deploy WealthManager --stage-bucket wealthmanager-e3d01.appspot.com --trigger-http
