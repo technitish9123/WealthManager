@@ -1,4 +1,4 @@
-const requestHttp = require('request');
+const requestHttp = require('request-promise');
 const QuoteSvc = require('./services/quoteService');
 const PortFolioSvc = require('./services/portfolioService');
 const stockSymbol = 'aapl';
@@ -9,8 +9,30 @@ const _ = require('underscore');
 
 let id = 1;
 let portFolioSvc = new PortFolioSvc();
-let quoteSvc = new QuoteSvc();
-console.log(quoteSvc.getSymbolInformation('AAPL', function (a) {
-    console.log(a)
-}));
-console.log(portFolioSvc.getPortfolioByUserId(1));
+
+// portFolioSvc.getOverviewByUserId(id).then(res => {
+//     console.log(res);
+// });
+// let quoteSvc = new QuoteSvc();
+
+// quoteSvc.getSymbolInformation(stockSymbol).then(res => {
+//     let lastRefreshed = new Date(res.latestUpdate);
+//     let stockDetails = `Stock Details for ${res.companyName} with symbol ${res.symbol} are as follows:
+// Open is ${res.open} and Close is ${res.close} with a high of ${res.high} and low of ${res.low}.
+// Details last refreshed on ${lastRefreshed.toDateString()} at ${lastRefreshed.toTimeString()}`;
+//     console.log(stockDetails);
+// }).catch(err => {
+//     console.log('Some Technical Error occurred! Apologies');
+// });
+
+
+// quoteSvc.getAllSymbolListData(['AAPL', 'FB']).then(a => {
+//     console.log(a.AAPL)
+// });
+// console.log(portFolioSvc.getOverviewByUserId(1));
+
+// requestHttp(`https://api.iextrading.com/1.0/stock/${stockSymbol}/quote11`).then(res => {
+//     console.log(res)
+// }).catch(err => {
+//     console.log('hi');
+// });

@@ -1,7 +1,9 @@
-const requestHttp = require('request');
+const requestHttp = require('request-promise');
 const portFolioData = require('./../db/portfolioData');
 const portFolioModel = require('./../models/portfolio');
+const QuoteSvc = require('./../services/quoteService');
 
+let quoteSvc = new QuoteSvc();
 const _ = require('underscore');
 
 module.exports = (function () {
@@ -11,6 +13,7 @@ module.exports = (function () {
 
     PortfolioSvc.prototype = {
         getDataFromDb: function () {
+            // make it a promise
             return portFolioData;
         },
         getPortfolioByUserId: function (id) {
@@ -21,6 +24,11 @@ module.exports = (function () {
         },
         getOverviewByUserId: function (id) {
             const userPortfolio = this.getPortfolioByUserId(id);
+            const symbolList = _.map(userPortfolio.txns, function (txn) {
+                return txn.symbolName;
+            });
+
+            return symbolList;
         }
     }
 

@@ -25,9 +25,16 @@ exports.WealthManager = function WealthManager(request, response) {
         responseToUser = `I am not sure about this symbol. Can you try another?`; // Send simple response to user
         sendResponse(responseToUser);
       } else {
-        quoteSvc.getSymbolInformation(stockSymbol, sendResponse);
+        quoteSvc.getSymbolInformation(stockSymbol).then(res => {
+          let lastRefreshed = new Date(res.latestUpdate);
+          let stockDetails = `Stock Details for ${res.companyName} with symbol ${res.symbol} are as follows:
+      Open is ${res.open} and Close is ${res.close} with a high of ${res.high} and low of ${res.low}.
+      Details last refreshed on ${lastRefreshed.toDateString()} at ${lastRefreshed.toTimeString()}`;
+          sendResponse(stockDetails);
+        }).catch(err => {
+          sendResponse('Some Technical Error occurred! Apologies');
+        });
       }
-
     },
     // The default welcome intent has been matched, welcome the user (https://dialogflow.com/docs/events#default_welcome_intent)
     'input.welcome': () => {
