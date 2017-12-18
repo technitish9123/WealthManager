@@ -1,6 +1,7 @@
 const requestHttp = require('request-promise');
 const portFolioData = require('./../db/portfolioData');
 const portFolioModel = require('./../models/portfolio');
+const overviewModel = require('./../models/overview');
 const QuoteSvc = require('./../services/quoteService');
 
 let quoteSvc = new QuoteSvc();
@@ -28,7 +29,19 @@ module.exports = (function () {
                 return txn.symbolName;
             });
 
-            return symbolList;
+            return new Promise(function (resolve, reject) {
+                let symbolOverViewList = [];
+
+                quoteSvc.getAllSymbolListData(symbolList).then(res => {
+                    _.each(symbolList, (symbol)=>{
+                        const symbolOverView = new overviewModel(res[symbol].quote);  
+                        symbolOverViewList.push(symbolOverView)
+                    })
+                    resolve(symbolOverViewList[0])
+                }).catch(err => {
+                    resolve(null);
+                })
+            });
         }
     }
 

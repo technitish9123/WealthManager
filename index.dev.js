@@ -10,9 +10,9 @@ const _ = require('underscore');
 let id = 1;
 let portFolioSvc = new PortFolioSvc();
 
-// portFolioSvc.getOverviewByUserId(id).then(res => {
-//     console.log(res);
-// });
+portFolioSvc.getOverviewByUserId(id).then(res => {
+    console.log(res);
+});
 // let quoteSvc = new QuoteSvc();
 
 // quoteSvc.getSymbolInformation(stockSymbol).then(res => {
