@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "moment": "^2.19.3",
+    "percent": "^2.0.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "underscore": "^1.8.3"

@@ -5,13 +5,21 @@ const stockSymbol = 'aapl';
 const _ = require('underscore');
 
 // let portfolio = new PortFolio(1);
+let portFolioSvc = new PortFolioSvc();
 // console.log(portfolio.getUser());
 
 let id = 1;
-let portFolioSvc = new PortFolioSvc();
+// const userPortfolio = portFolioSvc.getPortfolioByUserId(id);
+// userPortfolio
+// const symbolList = _.filter(userPortfolio.txns, function (txn) {
+//     return txn.symbolName == 'AAPL'
+// });
+// console.log(symbolList);
 
-portFolioSvc.getOverviewByUserId(id).then(res => {
-    console.log(res);
+
+
+portFolioSvc.getPortfolioByUserId(id).then(res => {
+    console.log(res.getGainPct());
 });
 // let quoteSvc = new QuoteSvc();
 

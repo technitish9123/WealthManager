@@ -9,12 +9,14 @@ module.exports = {
                     symbolName: 'AAPL',
                     quantity: 4,
                     date: '',
+                    buyPrice: 200
                 },
                 {
                     type: 'b',
                     symbolName: 'MSFT',
                     quantity: 4,
                     date: '',
+                    buyPrice: 60
                 }
             ],
             cashAmount: 3000

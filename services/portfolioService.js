@@ -1,7 +1,7 @@
 const requestHttp = require('request-promise');
 const portFolioData = require('./../db/portfolioData');
 const portFolioModel = require('./../models/portfolio');
-const overviewModel = require('./../models/overview');
+const SymbolDetail = require('./../models/symbolDetail');
 const QuoteSvc = require('./../services/quoteService');
 
 let quoteSvc = new QuoteSvc();
@@ -18,30 +18,38 @@ module.exports = (function () {
             return portFolioData;
         },
         getPortfolioByUserId: function (id) {
-            const totalResults = this.getDataFromDb();
-            const resultForUserId = _.find(totalResults.users, (user) => user.id === id);
-            const returnValue = new portFolioModel(resultForUserId);
-            return returnValue;
-        },
-        getOverviewByUserId: function (id) {
-            const userPortfolio = this.getPortfolioByUserId(id);
-            const symbolList = _.map(userPortfolio.txns, function (txn) {
-                return txn.symbolName;
-            });
+            const userData = this.getDataFromDb();
 
             return new Promise(function (resolve, reject) {
-                let symbolOverViewList = [];
+                const resultForUserId = _.find(userData.users, (user) => user.id === id);
 
-                quoteSvc.getAllSymbolListData(symbolList).then(res => {
-                    _.each(symbolList, (symbol)=>{
-                        const symbolOverView = new overviewModel(res[symbol].quote);  
-                        symbolOverViewList.push(symbolOverView)
-                    })
-                    resolve(symbolOverViewList[0])
+                const userportfolio = new portFolioModel(resultForUserId);
+
+                const symbolsInPortfolio = _.map(userportfolio.txns, function (txn) {
+                    return txn.symbolName;
+                });
+                let symbolDetailList = [];
+
+                quoteSvc.getAllSymbolListData(symbolsInPortfolio).then(res => {
+                    _.each(symbolsInPortfolio, (symbol) => {
+
+                        const symbolProperties = _.find(userportfolio.txns, function (txn) {
+                            return txn.symbolName == symbol
+                        });
+
+                        const symbolDetail = new SymbolDetail(res[symbol].quote, symbolProperties);
+                        symbolDetailList.push(symbolDetail)
+                    });
+
+                    userportfolio.setSymbolDetails(symbolDetailList);
+                    resolve(userportfolio)
                 }).catch(err => {
                     resolve(null);
                 })
             });
+        },
+        getOverviewByUserId: function (id) {
+
         }
     }
 
