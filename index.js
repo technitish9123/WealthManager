@@ -2,8 +2,9 @@ const requestHttp = require('request');
 const moment = require('moment');
 const _ = require('underscore');
 const QuoteSvc = require('./services/quoteService');
-
+const PortFolioSvc = require('./services/portfolioService');
 let quoteSvc = new QuoteSvc();
+let portFolioSvc = new PortFolioSvc();
 
 exports.WealthManager = function WealthManager(request, response) {
   let action = request.body.result.action; // https://dialogflow.com/docs/actions-and-parameters
@@ -35,6 +36,17 @@ exports.WealthManager = function WealthManager(request, response) {
           sendResponse('Some Technical Error occurred! Apologies');
         });
       }
+    },
+    'GetOverView': () => {
+      const userId = 1;
+      portFolioSvc.getPortfolioByUserId(userId).then(res => {
+        let overViewDetail = `Your portfolio shows a gain of ${res.getGain().toFixed(2)}$ or ${res.getGainPct()}%.
+        Total change is ${res.getChange().toFixed(2)}$ or ${res.getChangePct()}% with a market value of ${res.getMarketValue().toFixed(2)}$.
+        `;
+        sendResponse(overViewDetail);
+      }).catch(err => {
+        sendResponse('Some Technical Error occurred! Apologies');
+      });
     },
     // The default welcome intent has been matched, welcome the user (https://dialogflow.com/docs/events#default_welcome_intent)
     'input.welcome': () => {
