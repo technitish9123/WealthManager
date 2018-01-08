@@ -48,8 +48,13 @@ module.exports = (function () {
                 })
             });
         },
-        getOverviewByUserId: function (id) {
-
+        getPortfolioBestPerformers: function (userId) {
+            let portfolio = this.getPortfolioByUserId(userId);
+            return new Promise(function (resolve, reject) {
+               portfolio.then(res => {
+                    resolve(res.sortByPerformance());
+                })
+            });
         }
     }
 

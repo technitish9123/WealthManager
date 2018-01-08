@@ -11,12 +11,17 @@ exports.WealthManager = function WealthManager(request, response) {
   let parameters = request.body.result.parameters; // https://dialogflow.com/docs/actions-and-parameters
   let inputContexts = request.body.result.contexts; // https://dialogflow.com/docs/contexts
   let responseToUser = '';
-  let sendResponse = (text) => {
+  let sendResponse = (text, context) => {
     response.setHeader('Content-Type', 'application/json'); //Requires application/json MIME type
-    response.send(JSON.stringify({
+    let rs = {
       "speech": text, "displayText": text
       //"speech" is the spoken version of the response, "displayText" is the visual version
-    }));
+    }
+
+    if (context) {
+      rs.contextOut = [context];
+    }
+    response.send(JSON.stringify(rs));
   }
   // Create handlers for Dialogflow actions as well as a 'default' handler
   const actionHandlers = {
@@ -42,8 +47,42 @@ exports.WealthManager = function WealthManager(request, response) {
       portFolioSvc.getPortfolioByUserId(userId).then(res => {
         let overViewDetail = `Your portfolio shows a gain of ${res.getGain().toFixed(2)}$ or ${res.getGainPct()}%.
         Total change is ${res.getChange().toFixed(2)}$ or ${res.getChangePct()}% with a market value of ${res.getMarketValue().toFixed(2)}$.
-        `;
+        Would you like to know portfolios' best performers?`;
         sendResponse(overViewDetail);
+      }).catch(err => {
+        sendResponse('Some Technical Error occurred! Apologies');
+      });
+    },
+    'Portfolio.Overview.best.performer.yes': () => {
+      const userId = 1;
+      let index = 0;
+      _.each(inputContexts, (inpContext) => {
+        if (inpContext.name === 'portfoliooverview-followup') {
+          index = parseInt(inpContext.parameters.BestPerformerIndex);
+        }
+      });
+      portFolioSvc.getPortfolioBestPerformers(userId).then(res => {
+        let overViewDetail = '';
+        let contextOut = null;
+        if (index < res.length) {
+          overViewDetail = `${index > 0 ? 'Next' : ''} Best performer in the portfolio is ${res[index].companyName} with symbol ${res[index].symbol}.
+         It shows a gain of ${res[index].gain.toFixed(2)}$ or ${res[index].gainPct}. Do you want to know the next one?`;
+         let next = index + 1;
+         contextOut = {
+            'name': 'portfoliooverview-followup',
+            'lifespan': 5,
+            'parameters': { 'BestPerformerIndex': next }
+          };
+        } else {
+          overViewDetail = 'No more symbols in the list.';
+          contextOut = {
+            'name': 'portfoliooverview-followup',
+            'lifespan': 0,
+            'parameters': { 'BestPerformerIndex': 0 }
+          };
+        }
+
+        sendResponse(overViewDetail, contextOut);
       }).catch(err => {
         sendResponse('Some Technical Error occurred! Apologies');
       });

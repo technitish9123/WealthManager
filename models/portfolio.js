@@ -59,5 +59,13 @@ module.exports = (function () {
         let costBasis = this.getCostBasis();
         return percent.calc(gain, costBasis, 2);
     };
+    PortFolio.prototype.sortByPerformance = function () {
+        return _.sortBy(this.symbolDetails, (symbolData) => {
+            let gain = symbolData.gain;
+            let costBasis = symbolData.costBasis;
+            return -1 * percent.calc(gain, costBasis, 2);
+        });
+    };
+
     return PortFolio;
 }());

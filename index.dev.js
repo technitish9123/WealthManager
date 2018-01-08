@@ -18,8 +18,8 @@ let id = 1;
 
 
 
-portFolioSvc.getPortfolioByUserId(id).then(res => {
-    console.log(res.getGainPct());
+portFolioSvc.getPortfolioBestPerformers(id).then(res => {
+    console.log(res);
 });
 // let quoteSvc = new QuoteSvc();
 
