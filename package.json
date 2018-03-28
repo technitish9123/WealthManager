@@ -9,6 +9,7 @@
   "author": "utkarsh trivedi",
   "license": "ISC",
   "dependencies": {
+    "csvtojson": "^1.1.9",
     "moment": "^2.19.3",
     "percent": "^2.0.0",
     "request": "^2.83.0",

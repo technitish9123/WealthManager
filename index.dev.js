@@ -18,10 +18,10 @@ let id = 1;
 
 
 
-portFolioSvc.getPortfolioBestPerformers(id).then(res => {
-    console.log(res);
-});
-// let quoteSvc = new QuoteSvc();
+// portFolioSvc.getPortfolioBestPerformers(id).then(res => {
+//     console.log(res);
+// });
+let quoteSvc = new QuoteSvc();
 
 // quoteSvc.getSymbolInformation(stockSymbol).then(res => {
 //     let lastRefreshed = new Date(res.latestUpdate);
@@ -34,9 +34,10 @@ portFolioSvc.getPortfolioBestPerformers(id).then(res => {
 // });
 
 
-// quoteSvc.getAllSymbolListData(['AAPL', 'FB']).then(a => {
-//     console.log(a.AAPL)
-// });
+quoteSvc.getAllMarketData().then(res => {
+    let marketDetails =  `Dow Jones INDUSTRIAL AVERAGES is at ${res.dji.Close} ${res.dji.changeIdentifier} by ${res.dji.change.toFixed(2)} points, Nasdaq is at ${res.ndq.Close} ${res.ndq.changeIdentifier} by ${res.ndq.change.toFixed(2)} points.`;
+    console.log(marketDetails)
+});
 // console.log(portFolioSvc.getOverviewByUserId(1));
 
 // requestHttp(`https://api.iextrading.com/1.0/stock/${stockSymbol}/quote11`).then(res => {

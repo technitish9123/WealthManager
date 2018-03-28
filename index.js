@@ -42,13 +42,22 @@ exports.WealthManager = function WealthManager(request, response) {
         });
       }
     },
+    'MarketDetails': () => {
+      quoteSvc.getAllMarketData().then(res => {
+        let marketDetails =  `Dow Jones INDUSTRIAL AVERAGES is at ${res.dji.Close} ${res.dji.changeIdentifier} by ${res.dji.change.toFixed(2)} points, Nasdaq is at ${res.ndq.Close} ${res.ndq.changeIdentifier} by ${res.ndq.change.toFixed(2)} points.`;
+        sendResponse(marketDetails);
+      }).catch(err => {
+        sendResponse('Some Technical Error occurred! Apologies');
+      });
+    },
+
     'GetOverView': () => {
       const userId = 1;
       portFolioSvc.getPortfolioByUserId(userId).then(res => {
         let overViewDetail = `Your portfolio shows a gain of ${res.getGain().toFixed(2)}$ or ${res.getGainPct()}%.
         Total change is ${res.getChange().toFixed(2)}$ or ${res.getChangePct()}% with a market value of ${res.getMarketValue().toFixed(2)}$.
         Would you like to know portfolios' best performers?`;
-        sendResponse(overViewDetail);
+          sendResponse(overViewDetail);
       }).catch(err => {
         sendResponse('Some Technical Error occurred! Apologies');
       });
@@ -67,8 +76,8 @@ exports.WealthManager = function WealthManager(request, response) {
         if (index < res.length) {
           overViewDetail = `${index > 0 ? 'Next' : ''} Best performer in the portfolio is ${res[index].companyName} with symbol ${res[index].symbol}.
          It shows a gain of ${res[index].gain.toFixed(2)}$ or ${res[index].gainPct}. Do you want to know the next one?`;
-         let next = index + 1;
-         contextOut = {
+          let next = index + 1;
+          contextOut = {
             'name': 'portfoliooverview-followup',
             'lifespan': 5,
             'parameters': { 'BestPerformerIndex': next }
