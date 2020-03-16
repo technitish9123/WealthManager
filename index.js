@@ -31,7 +31,7 @@ exports.WealthManager = function WealthManager(request, response) {
         responseToUser = `I am not sure about this symbol. Can you try another?`; // Send simple response to user
         sendResponse(responseToUser);
       } else {
-        quoteSvc.getSymbolInformation(stockSymbol).then(res => {
+        quoteSvc.getSymbolinformation(stockSymbol).then(res)  => {
           let lastRefreshed = new Date(res.latestUpdate);
           let stockDetails = `Stock Details for ${res.companyName} with symbol ${res.symbol} are as follows:
       Open is ${res.open} and Close is ${res.close} with a high of ${res.high} and low of ${res.low}.
